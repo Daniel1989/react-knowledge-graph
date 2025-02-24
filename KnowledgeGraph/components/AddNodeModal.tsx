@@ -106,7 +106,7 @@ type NodeType = "model" | "data" | "type";
 
 interface FormData {
   name: string;
-  type: NodeType;
+  type: string;
   direction: "inside" | "outside";
   label: string;
 }
@@ -189,7 +189,7 @@ export function AddNodeDrawer() {
           {/* Name Input */}
           <div style={styles.formGroup}>
             <label htmlFor="name" style={styles.label}>
-              Name
+              实体名称
             </label>
             <input
               id="name"
@@ -206,27 +206,24 @@ export function AddNodeDrawer() {
           {/* Type Select */}
           <div style={styles.formGroup}>
             <label htmlFor="type" style={styles.label}>
-              Type
+              实体类型
             </label>
-            <select
+            <input
               id="type"
+              type="text"
               value={formData.type}
               onChange={(e) => setFormData(prev => ({ 
                 ...prev, 
-                type: e.target.value as NodeType
+                type: e.target.value 
               }))}
-              style={styles.select as React.CSSProperties}
-            >
-              <option value="model" style={styles.option}>Model</option>
-              <option value="data" style={styles.option}>Data</option>
-              <option value="type" style={styles.option}>Type</option>
-            </select>
+              style={styles.input}
+            />
           </div>
 
           {/* Direction Select */}
           <div style={styles.formGroup}>
             <label htmlFor="direction" style={styles.label}>
-              Direction
+              方向
             </label>
             <select
               id="direction"
@@ -237,15 +234,15 @@ export function AddNodeDrawer() {
               }))}
               style={styles.select as React.CSSProperties}
             >
-              <option value="inside" style={styles.option}>Inside</option>
-              <option value="outside" style={styles.option}>Outside</option>
+              <option value="inside" style={styles.option}>入方向</option>
+              <option value="outside" style={styles.option}>出方向</option>
             </select>
           </div>
 
           {/* Label Input */}
           <div style={styles.formGroup}>
             <label htmlFor="label" style={styles.label}>
-              Label
+              关系描述
             </label>
             <input
               id="label"
