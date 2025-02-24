@@ -17,6 +17,8 @@ import { store } from "./store";
 import { ConfigProps } from "./typings/Config";
 import GraphBoundsController from "./Controller/GraphBoundsController";
 import FilterBar from "./FilterBar";
+import { DrawerProvider } from './Controller/DrawerController';
+import { AddNodeDrawer } from './components/AddNodeModal';
 
 function GraphContainer({ children }: { children: React.ReactNode }) {
   const { config } = useContext(ConfigContext)!;
@@ -39,19 +41,24 @@ function GraphContainer({ children }: { children: React.ReactNode }) {
 
 function Graph(graphConfig: ConfigProps) {
   return (
-    <ConfigController graphConfig={graphConfig}>
-      <Provider store={store}>
-        <RightMenuController>
-          <GraphBoundsController>
-            <GraphContainer>
-              <Helper />
-              <FilterBar />
-              <Canvas />
-            </GraphContainer>
-          </GraphBoundsController>
-        </RightMenuController>
-      </Provider>
-    </ConfigController>
+    <DrawerProvider>
+      <ConfigController graphConfig={graphConfig}>
+        <Provider store={store}>
+          <div style={{ display: "flex" }}>
+            <RightMenuController>
+              <GraphBoundsController>
+                <GraphContainer>
+                  <Helper />
+                  <FilterBar />
+                  <Canvas />
+                </GraphContainer>
+              </GraphBoundsController>
+            </RightMenuController>
+            <AddNodeDrawer />
+          </div>
+        </Provider>
+      </ConfigController>
+    </DrawerProvider>
   );
 }
 

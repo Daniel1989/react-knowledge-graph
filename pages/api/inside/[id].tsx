@@ -25,6 +25,7 @@ export default async function handler(
     const id = req.query.id as string;
     if (db) {
       const collection = await db.collection("Inside-Nodes");
+      console.log("id", id);
       const nodes = await collection
         .find<NodeProps>({ parentId: id })
         .toArray();

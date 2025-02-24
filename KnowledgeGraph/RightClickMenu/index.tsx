@@ -30,9 +30,11 @@ import {
   useRightMenuEvent,
   useRightMenuEventDispatch,
 } from "../Controller/RightMenuController";
+import { AddNodeDrawer } from "../components/AddNodeModal";
+import { useDrawer } from "../Controller/DrawerController";
 
 const canvasItems = ["复位画布", "下载当前图谱", "全屏"];
-const nodeItems = ["当前实体居中", "显示当前节点关系", "显示所有节点"];
+const nodeItems = ["当前实体居中", "显示当前节点关系", "显示所有节点", "添加新节点", "删除节点"];
 const imageItems = ["JPG", "JPEG", "PNG", "BMP"];
 
 function RightMenuContent() {
@@ -54,6 +56,7 @@ function RightMenuContent() {
   }, [event]);
 
   const nodes = useAppSelector((state) => state.graph.nodes);
+  const { openDrawer } = useDrawer();
 
   const moveNodeToCenter = useCallback(() => {
     const nodeId = (event!.target as HTMLElement).getAttribute("node-id");
@@ -136,7 +139,23 @@ function RightMenuContent() {
   );
 
   const [isDownload, setIsDownload] = useState<boolean>(false);
-  // const dispatchFullScreen = useDispatchFullScreen();
+  const [isAddNodeModalOpen, setIsAddNodeModalOpen] = useState(false);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+
+  const handleDeleteNode = async (nodeId: string) => {
+    try {
+      const response = await fetch(`/api/node/delete/${nodeId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete node');
+      }
+
+    } catch (error) {
+      console.error('Error deleting node:', error);
+    }
+  };
 
   return (
     <>
@@ -219,20 +238,22 @@ function RightMenuContent() {
                   onClick={() => {
                     if (item === "当前实体居中") {
                       moveNodeToCenter();
-                    }
-
-                    if (item === "显示当前节点关系") {
-                      const nodeId = (
-                        event!.target as HTMLElement
-                      ).getAttribute("node-id");
+                    } else if (item === "显示当前节点关系") {
+                      const nodeId = (event!.target as HTMLElement).getAttribute("node-id");
                       const node = nodes.find((n) => n.id === nodeId)!;
                       dispatch(onlyShowCurrentNodeAndChildren(node));
-                    }
-
-                    if (item === "显示所有节点") {
+                    } else if (item === "显示所有节点") {
                       dispatch(showAllNodes(undefined));
+                    } else if (item === "添加新节点") {
+                      const nodeId = (event!.target as HTMLElement).getAttribute("node-id");
+                      openDrawer(nodeId!);
+                    } else if (item === "删除节点") {
+                      const nodeId = (event!.target as HTMLElement).getAttribute("node-id");
+                      handleDeleteNode(nodeId!);
                     }
-                    setEvent(null);
+                    if (item !== "添加新节点") {
+                      setEvent(null);
+                    }
                   }}
                 >
                   {item}

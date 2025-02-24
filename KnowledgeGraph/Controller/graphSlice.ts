@@ -4,6 +4,7 @@ import { NodeFrontProps } from "../typings/Node";
 import { ConfigProps } from "../typings/Config";
 import { EdgeFrontProps, EdgeProps } from "../typings/Edge";
 import uniqBy from "lodash.uniqby";
+import { createAction } from "@reduxjs/toolkit";
 
 type GraphProps = { nodes: NodeFrontProps[]; edges: EdgeFrontProps[] };
 
@@ -353,6 +354,15 @@ export const graphSlice: Slice<typeof initialState> = createSlice({
         });
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(removeNode, (state, action) => {
+        state.nodes = state.nodes.filter(node => node.id !== action.payload);
+        state.edges = state.edges.filter(edge => 
+          edge.fromId !== action.payload && edge.toId !== action.payload
+        );
+      });
+  },
 });
 
 export const {
@@ -373,4 +383,7 @@ export const {
   isShowNodesAndEdges,
   setHoveredNodesAndEdges,
 } = graphSlice.actions;
+
+export const removeNode = createAction<string>('graph/removeNode');
+
 export default graphSlice.reducer;
